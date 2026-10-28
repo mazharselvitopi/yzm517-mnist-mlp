@@ -1,0 +1,17 @@
+{
+  "data_dir": "/home/ubuntu/datasets/mnist",
+  "output": "runs/final-b-retry",
+  "epochs": 12,
+  "batch_size": 128,
+  "hidden_sizes": [
+    256,
+    128
+  ],
+  "optimizer": "adam",
+  "lr": 0.001,
+  "seed": 42,
+  "val_size": 10000,
+  "limit_train": null,
+  "limit_val": null,
+  "device": "cpu"
+}

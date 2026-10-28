@@ -1,0 +1,21 @@
+{
+  "loss": 0.07772731429152191,
+  "accuracy": 0.978,
+  "samples": 10000,
+  "evaluation_seconds": 1.893287813058123,
+  "checkpoint": "/home/ubuntu/workspace/odevler/yzm517-mnist-mlp/results/deney-b/best.pt",
+  "checkpoint_sha256": "8d270129932b5ffdd4a8c0fc43231576f73e1e9a1a4116cf44224a7eae38c8c1",
+  "selected_epoch": 7,
+  "selection_metric": "val_loss",
+  "final_model_selected": true,
+  "versions": {
+    "python": "3.14.4",
+    "torch": "2.14.1+cu130",
+    "torchvision": "0.29.1+cu130",
+    "numpy": "2.5.4",
+    "platform": "Linux-7.0.0-1009-oracle-aarch64-with-glibc2.43",
+    "machine": "aarch64",
+    "device": "cpu",
+    "threads": 2
+  }
+}

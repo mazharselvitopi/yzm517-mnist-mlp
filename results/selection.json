@@ -1,0 +1,63 @@
+{
+  "selected": "b",
+  "criterion": "minimum best_val_loss; test sonucu görülmeden seçildi",
+  "selected_at": "2026-10-28T19:15:55.355911+00:00",
+  "test_accessed_at_selection": false,
+  "runs": {
+    "a": {
+      "best_epoch": 9,
+      "best_val_loss": 0.08320650250017643,
+      "training_seconds": 147.99803227407392,
+      "training_seconds_scope": "epoch döngüsü ve checkpoint/log I/O; veri indirme ve grafik hariç",
+      "train_samples": 50000,
+      "val_samples": 10000,
+      "test_accessed": false,
+      "run_kind": "experiment",
+      "best_row": {
+        "epoch": 9,
+        "train_loss": 0.02669046827852726,
+        "val_loss": 0.08320650250017643,
+        "train_accuracy": 0.9915,
+        "val_accuracy": 0.9757,
+        "elapsed_seconds": 111.00882646907121
+      },
+      "last_row": {
+        "epoch": 12,
+        "train_loss": 0.019648814471066,
+        "val_loss": 0.1047412748515606,
+        "train_accuracy": 0.99306,
+        "val_accuracy": 0.9737,
+        "elapsed_seconds": 147.9974691499956
+      },
+      "parameters": 109386
+    },
+    "b": {
+      "best_epoch": 7,
+      "best_val_loss": 0.07518077762722969,
+      "training_seconds": 151.57594184495974,
+      "training_seconds_scope": "epoch döngüsü ve checkpoint/log I/O; veri indirme ve grafik hariç",
+      "train_samples": 50000,
+      "val_samples": 10000,
+      "test_accessed": false,
+      "run_kind": "experiment",
+      "best_row": {
+        "epoch": 7,
+        "train_loss": 0.027351413338184357,
+        "val_loss": 0.07518077762722969,
+        "train_accuracy": 0.99122,
+        "val_accuracy": 0.978,
+        "elapsed_seconds": 88.04427377297543
+      },
+      "last_row": {
+        "epoch": 12,
+        "train_loss": 0.015052703374810517,
+        "val_loss": 0.09323628908619284,
+        "train_accuracy": 0.99492,
+        "val_accuracy": 0.979,
+        "elapsed_seconds": 151.57537440094166
+      },
+      "parameters": 235146
+    }
+  },
+  "interrupted_run": "final-b 8/12 epoch sonrasında kesildi; karşılaştırmada kullanılmadı, aynı ayarlarla sıfırdan final-b-retry tamamlandı."
+}

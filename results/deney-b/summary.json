@@ -1,0 +1,10 @@
+{
+  "best_epoch": 7,
+  "best_val_loss": 0.07518077762722969,
+  "training_seconds": 151.57594184495974,
+  "training_seconds_scope": "epoch döngüsü ve checkpoint/log I/O; veri indirme ve grafik hariç",
+  "train_samples": 50000,
+  "val_samples": 10000,
+  "test_accessed": false,
+  "run_kind": "experiment"
+}

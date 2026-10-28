@@ -1,0 +1,8 @@
+# Doğrudan bağımlılıklar; Linux ARM64/Python3.14.4 gerçek test ve MNIST smoke sürümleri.
+# CUDA zorunlu değildir; platforma uygun PyTorch kurulumu kullan.
+torch==2.14.1
+torchvision==0.29.1
+numpy==2.5.4
+matplotlib==3.11.2
+Pillow==13.0.0
+pytest==9.1.1

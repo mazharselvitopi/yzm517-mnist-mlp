@@ -1,0 +1,71 @@
+{
+  "samples": 9,
+  "correct": 8,
+  "accuracy": 0.8888888888888888,
+  "ground_truth_source": "Kullanıcının kendi fotoğrafının insan tarafından okunması; etiketler model tahmininden türetilmedi.",
+  "digits": [
+    {
+      "position": 1,
+      "actual": 2,
+      "prediction": 2,
+      "correct": true,
+      "maximum_probability": 0.990827739238739
+    },
+    {
+      "position": 2,
+      "actual": 6,
+      "prediction": 6,
+      "correct": true,
+      "maximum_probability": 0.9990481734275818
+    },
+    {
+      "position": 3,
+      "actual": 9,
+      "prediction": 9,
+      "correct": true,
+      "maximum_probability": 0.7289823889732361
+    },
+    {
+      "position": 4,
+      "actual": 7,
+      "prediction": 7,
+      "correct": true,
+      "maximum_probability": 0.9992579817771912
+    },
+    {
+      "position": 5,
+      "actual": 9,
+      "prediction": 9,
+      "correct": true,
+      "maximum_probability": 0.4881651699542999
+    },
+    {
+      "position": 6,
+      "actual": 7,
+      "prediction": 4,
+      "correct": false,
+      "maximum_probability": 0.9170910716056824
+    },
+    {
+      "position": 7,
+      "actual": 0,
+      "prediction": 0,
+      "correct": true,
+      "maximum_probability": 0.9097005724906921
+    },
+    {
+      "position": 8,
+      "actual": 1,
+      "prediction": 1,
+      "correct": true,
+      "maximum_probability": 0.9999194145202637
+    },
+    {
+      "position": 9,
+      "actual": 3,
+      "prediction": 3,
+      "correct": true,
+      "maximum_probability": 0.9977194666862488
+    }
+  ]
+}

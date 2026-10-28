@@ -1,0 +1,8 @@
+{
+  "scope": "Repo teslim içeriği: README, RAPOR, ODEV, ham deney/test ve kişisel el yazısı kayıtları",
+  "mode": "independent-read-only-delivery-audit",
+  "passed": true,
+  "errors": [],
+  "summary": "Rapor sayıları, A/B sonuçları, validation loss ile B/epoch 7 seçimi, checkpoint SHA-256, confusion matrix, kişisel 8/9 sonucu ve görsel bağlantıları tutarlı; yönergedeki zorunlu repo içerikleri mevcut.",
+  "limitations": "Bu denetim public görünürlüğü veya Classroom teslimini doğrulamaz. Öğrencinin konuyu anlatabilmesi dosya denetimiyle kanıtlanmaz."
+}

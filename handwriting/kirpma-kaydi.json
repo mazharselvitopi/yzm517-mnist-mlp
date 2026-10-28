@@ -1,0 +1,104 @@
+{
+  "method": "Orijinal fotoğraftan insanın belirlediği dikdörtgenler; rakamlar çizilmedi veya düzeltilmedi.",
+  "digits": [
+    {
+      "position": 1,
+      "label": 2,
+      "crop_box": [
+        155,
+        375,
+        337,
+        615
+      ],
+      "file": "hane-01.png"
+    },
+    {
+      "position": 2,
+      "label": 6,
+      "crop_box": [
+        337,
+        390,
+        450,
+        620
+      ],
+      "file": "hane-02.png"
+    },
+    {
+      "position": 3,
+      "label": 9,
+      "crop_box": [
+        450,
+        405,
+        585,
+        615
+      ],
+      "file": "hane-03.png"
+    },
+    {
+      "position": 4,
+      "label": 7,
+      "crop_box": [
+        595,
+        405,
+        795,
+        625
+      ],
+      "file": "hane-04.png"
+    },
+    {
+      "position": 5,
+      "label": 9,
+      "crop_box": [
+        790,
+        425,
+        935,
+        635
+      ],
+      "file": "hane-05.png"
+    },
+    {
+      "position": 6,
+      "label": 7,
+      "crop_box": [
+        935,
+        435,
+        1105,
+        645
+      ],
+      "file": "hane-06.png"
+    },
+    {
+      "position": 7,
+      "label": 0,
+      "crop_box": [
+        1125,
+        480,
+        1285,
+        665
+      ],
+      "file": "hane-07.png"
+    },
+    {
+      "position": 8,
+      "label": 1,
+      "crop_box": [
+        1295,
+        485,
+        1355,
+        675
+      ],
+      "file": "hane-08.png"
+    },
+    {
+      "position": 9,
+      "label": 3,
+      "crop_box": [
+        1360,
+        505,
+        1515,
+        695
+      ],
+      "file": "hane-09.png"
+    }
+  ]
+}
