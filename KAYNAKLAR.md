@@ -1,34 +1,38 @@
-# Kaynaklar ve kapsam
-
-## Asıl ödev yönergesi
-
-`ODEV.md`, Classroom Ödev 1 yönergesinin yerel kopyasıdır. Son teslim tarihi ve içerik **28 Ekim 2026 tarihinde canlı Classroom API üzerinden** yeniden kontrol edilmiştir: 28 Ekim 2026, 23.59 Europe/Istanbul. Kendi el yazısı, çalıştırılabilir kod, MLP ve teslim şartlarında öğretmen yönergesi esastır.
+# Kaynaklar
 
 ## Teknik kaynaklar
 
-Aşağıdaki kaynaklar ilk atölye hazırlığında 22 Ekim 2026 tarihinde ilgili bölümleriyle incelenmiştir. Bu repo için tüm belgelerin yeniden okunduğu veya tüm sitenin tarandığı iddia edilmez.
+Aşağıdaki kaynakları, yapay zekâ desteğiyle hazırlanan çalışmanın ilgili kod bölümleri için referans olarak kullandım. Kaynakların kullanım kapsamını her başlığın altında belirttim.
 
-### [S01] PyTorch — Build the Neural Network
+### [S01] PyTorch: Build the Neural Network
 
 https://docs.pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html
 
-İncelenen kapsam: `nn.Module`, `forward`, `Flatten`, `Linear`, `ReLU`, `Sequential`, logits ve softmax. Buradaki örnek veri FashionMNIST’tir; bu proje **MNIST** kullanır. Resmî örneğin sonuçları bu projenin sonucu değildir.
+İlgili konular: `nn.Module`, `forward`, `Flatten`, `Linear`, `ReLU`, `Sequential`, logits ve softmax.
 
-### [S02] PyTorch — CrossEntropyLoss
+Bu kaynak, `mlp.py` içindeki model yapısı ve [ANLATIM.md](ANLATIM.md) dosyasındaki tensor boyutları açıklamasıyla ilişkilidir. Kaynaktaki örnek FashionMNIST kullanır; bu projede kullanılan veri seti MNIST'tir. Kaynaktaki örnek sonuçları kendi deney sonucum olarak kullanmadım.
+
+### [S02] PyTorch: CrossEntropyLoss
 
 https://raw.githubusercontent.com/pytorch/pytorch/v2.14.1/torch/nn/modules/loss.py
 
-Sürüme sabitlenmiş resmî kaynak kodundaki `CrossEntropyLoss` docstring kapsamı: normalize edilmemiş logits, sınıf-indeksli target, log-softmax + NLLLoss eşdeğerliği ve reduction. Bu nedenle model eğitimde softmax değil logits döndürür.
+İlgili konular: `CrossEntropyLoss` sınıfının açıklaması, normalize edilmemiş logits beklentisi, sınıf indeksli etiketler ve reduction işlemi. Kullanılan kaynak PyTorch v2.14.1 sürümüne sabitlenmiştir.
 
-### [S03] Torchvision — MNIST
+Eğitimde logits'e ayrıca softmax eklenmemesi ve kaybın örnek sayısıyla ağırlıklandırılması bu açıklamalarla ilişkilidir.
+
+### [S03] Torchvision: MNIST
 
 https://docs.pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html
 
-İncelenen kapsam: `root`, `train`, `transform`, `download` ve görüntü/etiket dönüşü. Train/validation ayrımı ve deney sonuçları bu API belgesinden değil projenin gerçek kodundan/çalıştırmasından gelir.
+İlgili konular: `root`, `train`, `transform`, `download` parametreleri ve görüntü/etiket dönüşü.
 
-## Deney kanıtının sınırı
+`train.py` eğitim havuzunu, `evaluate.py` ise ayrı test havuzunu yükler. Train/validation bölmesi bu projenin kodunda yapılır; kaynak dokümanın verdiği hazır bir bölüm değildir.
 
-- `results/` altındaki dosyalar varsa gerçek deneylerin kopyasıdır; küçük fixture testlerinin sonucu değildir.
-- `evidence/lesson-probes.txt` ilk hazırlık sırasında gerçekten çalıştırılan tensor/CE/gradient problarını içerir.
-- `tests/` veri indirmeyen küçük testlerle kod sözleşmelerini denetler; testlerin geçmesi MNIST doğruluğunu veya öğrencinin konuyu öğrendiğini kanıtlamaz.
-- `ANLATIM.md` açıklama ve alıştırma notudur. Nihai ölçümler için `RAPOR.md` ve ilgili JSON/CSV dosyaları esas alınır.
+## Projeye ait kayıtlar
+
+- `results/`: Gerçek eğitim ve test sonuçları, hiperparametreler, veri bölmesi, grafikler ve checkpoint'ler.
+- `handwriting/`: Kendi el yazımın orijinal fotoğrafı, hane kırpmaları ve tahmin kayıtları.
+- `evidence/lesson-probes.txt`: Tensor boyutu, cross-entropy ve gradient için önceki küçük çalıştırmaların çıktıları.
+- `tests/`: Küçük ve sentetik girdilerle yapılan kod kontrolleri. Bunların sonuçları, modelin MNIST veya el yazısı doğruluğu değildir.
+
+Kaynakların ilgili bölümleri ilk hazırlıkta 22 Ekim 2026 tarihinde incelenmiştir. Bu liste, belgelerin tamamının veya bütün PyTorch sitesinin okunduğu anlamına gelmez. Rapordaki deney sonuçları bu kaynaklardan değil, proje kodunun gerçek çalıştırmalarından alınmıştır.

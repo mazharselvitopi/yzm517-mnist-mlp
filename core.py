@@ -30,7 +30,7 @@ def versions():
 
 def validate_data_dir(path):
     path = Path(path).expanduser().resolve()
-    # Yalnız bu projeyi değil, bulunduğu workspace deposunu da koru.
+    # Verinin bu deponun veya bir üst Git deposunun içine yazılmasını önle.
     for parent in (Path(__file__).resolve().parent, *Path(__file__).resolve().parents):
         if (parent / '.git').exists() and path.is_relative_to(parent):
             raise ValueError('--data-dir Git deposunun dışında olmalı (örn. ~/datasets/mnist).')

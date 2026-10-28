@@ -1,4 +1,4 @@
-"""Bir dosya = bir rakam. Tam öğrenci numarası segmentasyonu yapılmaz."""
+"""Tek rakam görüntüsünü hazırlar ve sınıflandırır; çok haneli görselleri bölmez."""
 import argparse
 from pathlib import Path
 
@@ -35,7 +35,7 @@ def preprocess_image(path, polarity='auto'):
     invert = polarity == 'dark' or (polarity == 'auto' and np.median(border) > 127)
     if invert:
         pixels = 255 - pixels
-    # Beyaz rakam/siyah arka plan; hafif tarayıcı arka planını temizle.
+    # Açık rakam/siyah arka plan: kenarlardan tahmin edilen arka plan yoğunluğunu çıkar.
     pixels = pixels - np.median(np.concatenate([pixels[0], pixels[-1], pixels[:, 0], pixels[:, -1]]))
     pixels = np.clip(pixels, 0, 255)
     if pixels.max() < 25:

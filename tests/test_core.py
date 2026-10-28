@@ -7,7 +7,7 @@ from mlp import MLP
 ROOT = Path(__file__).resolve().parents[1]
 
 def test_training_primitives(tmp_path):
-    assert (ROOT / 'core.py').exists(), 'Tekrarlanabilir eğitim çekirdeği henüz yok'
+    assert (ROOT / 'core.py').exists(), 'core.py dosyası bulunamadı.'
     from core import make_split, run_epoch, save_checkpoint, load_checkpoint, validate_data_dir
     train, val = make_split(100, 20, 7, 30, 10)
     assert (train, val) == make_split(100, 20, 7, 30, 10)

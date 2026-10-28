@@ -6,7 +6,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 
 def test_model_shape_and_mlp_contract():
-    assert (ROOT / 'mlp.py').exists(), 'MLP uygulaması henüz yok'
+    assert (ROOT / 'mlp.py').exists(), 'mlp.py dosyası bulunamadı.'
     from mlp import MLP
     model = MLP([64, 32])
     assert model(torch.zeros(3, 1, 28, 28)).shape == (3, 10)

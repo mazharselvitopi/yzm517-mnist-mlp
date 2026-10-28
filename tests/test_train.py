@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_training_cli_keeps_test_closed_and_writes_artifacts(tmp_path, monkeypatch):
-    assert (ROOT / 'train.py').exists(), 'Eğitim CLI henüz yok'
+    assert (ROOT / 'train.py').exists(), 'train.py dosyası bulunamadı.'
     train = importlib.import_module('train')
     calls = []
     class SmallDataset:

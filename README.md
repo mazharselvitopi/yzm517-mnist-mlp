@@ -1,53 +1,94 @@
-# MNIST ile MLP Tabanlı El Yazısı Rakam Tanıma
+# MNIST ile MLP tabanlı el yazısı rakam tanıma
 
-**Ders:** YZM517 — Yapay Sinir Ağları · **Ödev 1**
+YZM517 Yapay Sinir Ağları dersi, Ödev 1
 
-Bu proje, MNIST rakamlarını yalnız tam bağlı katmanlardan oluşan bir Multi-Layer Perceptron (MLP) ile sınıflandırır. Modeller sıfırdan eğitilir; CNN veya hazır eğitilmiş ağırlık kullanılmaz. İki gizli katman genişliği, aynı veri bölümü ve aynı eğitim bütçesi altında karşılaştırılır.
+Bu çalışmada MNIST rakamlarını iki gizli katmanlı bir MLP ile sınıflandırdım. İki farklı katman genişliğini aynı veri bölümü ve eğitim ayarlarıyla karşılaştırdım. Validation loss değerine göre seçilen modeli, ayrı test kümesinde ve kendi el yazımla hazırladığım görüntülerde değerlendirdim. Kod, deney yürütme ve rapor hazırlığında yapay zekâ desteği aldım.
 
-> **Sonuç:** İki tam eğitim ve final test tamamlandı. Seçilen model MNIST testinde **%97.80**, öğrencinin gerçek el yazısında **8/9 hane (%88.89)** doğruluk verdi. Deneyler ve yorumlar [RAPOR.md](RAPOR.md) içinde; ham ölçümler `results/`, gerçek el yazısı `handwriting/` altında. Classroom teslimi henüz yapılmadı; öğrencinin konuyu anlatabilmesi ayrıca çalışılacaktır.
+## Sonuçlar
 
-## 1. Deney düzeni
+| Ölçüm | Sonuç |
+|---|---:|
+| Seçilen mimari | 784 → 256 → 128 → 10 |
+| Seçilen checkpoint | Deney B, epoch 7 |
+| Validation loss | 0.075181 |
+| MNIST test loss | 0.077727 |
+| MNIST test doğruluğu | %97.80 (9.780/10.000) |
+| Kendi el yazımda hane doğruluğu | %88.89 (8/9) |
 
-| Özellik | Değer |
+Kendi el yazımda altıncı hanedeki 7, model tarafından 4 olarak tahmin edildi. Bu hatayı sonuçlarda korudum. Deneylerin tamamı, eğitim grafikleri ve değerlendirmem [RAPOR.md](RAPOR.md) dosyasında bulunuyor.
+
+![Kendi el yazım için gerçek etiket ve tahmin karşılaştırması](handwriting/karsilastirma.png)
+
+## Dosyalar
+
+| Dosya veya dizin | İçerik |
 |---|---|
-| Girdi | 28 × 28 gri görüntü, düzleştirilmiş 784 özellik |
-| Deney A | 784 → 128 → 64 → 10 |
-| Deney B | 784 → 256 → 128 → 10 |
-| Gizli aktivasyon | ReLU |
-| Çıkış | 10 logits; eğitimden önce softmax eklenmez |
-| Loss | CrossEntropyLoss |
-| Optimizer | Adam, öğrenme oranı 0.001 |
-| Eğitim bütçesi | Her model için 12 epoch, batch size 128 |
-| Tohum | 42 |
-| Train / validation | MNIST eğitim havuzundan ayrık 50.000 / 10.000 örnek |
-| Test | Resmî ayrı 10.000 örnek; yalnız model seçiminden sonra |
-| Normalizasyon | `(pixel / 255 − 0.1307) / 0.3081` |
-| Checkpoint seçimi | Her koşuda minimum validation loss; sonra A/B arasında minimum validation loss |
-| Donanım | CPU, iki PyTorch thread |
+| [RAPOR.md](RAPOR.md) | Deney düzeni, sonuçlar, grafikler ve genel değerlendirmem |
+| [ANLATIM.md](ANLATIM.md) | Modelin çalışma mantığına ilişkin teknik notlarım |
+| [DOGRULAMA.md](DOGRULAMA.md) | Testler ve sonuç dosyalarının tutarlılık kontrolleri |
+| [KAYNAKLAR.md](KAYNAKLAR.md) | Kaynaklar ve kullanım kapsamları |
+| `mlp.py` | MLP mimarisi |
+| `core.py` | Veri bölme, seed, eğitim ölçümü ve checkpoint işlemleri |
+| `train.py` | Train/validation eğitimi ve eğitim grafikleri |
+| `evaluate.py` | Seçilen modelin ayrı test kümesinde değerlendirilmesi |
+| `predict.py` | Tek rakam görüntüsünün hazırlanması ve tahmini |
+| `tests/` | Mimari, veri ayrımı, ölçüm ve görüntü işleme testleri |
+| `results/` | İki deneyin kayıtları, ağırlıkları ve final test sonuçları |
+| `handwriting/` | Orijinal fotoğrafım, hane kırpmaları ve tahmin sonuçları |
 
-Tek değişken gizli katman genişliğidir. Tüm modeller aynı seed ile oluşturulmuş aynı indeksleri kullanır. Test doğruluğu model/epoch/hiperparametre seçmek için kullanılmaz. Tek tohumla karşılaştırma, istatistiksel üstünlük kanıtı değildir.
+## Kurulum
 
-## 2. Kurulum ve test
-
-Python sanal ortamı kullanın. Bu sunucuda doğrulanan sürümler `requirements.txt`, tam ortam dökümü `environment-lock.txt` içindedir. Diğer işletim sistemlerinde aynı sürümlerin kurulabilirliği ayrıca doğrulanmamıştır. GPU gerekmez; kod CPU kullanır.
+Komutlar Bash içindir. Kurulumdan sonraki örnekler repo kökünde ve sanal ortam etkinken çalıştırılır.
 
 ```bash
+git clone https://github.com/mazharselvitopi/yzm517-mnist-mlp.git
+cd yzm517-mnist-mlp
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
-Bu çalışmanın sunucudaki Python yolu:
+Çalışma Linux ARM64, Python 3.14.4 ve CPU üzerinde doğrulandı. Doğrudan paket sürümleri `requirements.txt`, tam ortam kaydı `environment-lock.txt` içindedir. GPU gerekli değildir. Farklı işletim sistemlerinde kurulum ayrıca doğrulanmamıştır; aynı seed kullanılsa bile farklı sürüm ve donanımda bit düzeyinde aynı sonuç garanti edilmez.
+
+## Hazır modelle el yazısı tahmini
+
+Repo içindeki seçilmiş modelle dokuz haneyi yeniden değerlendirmek için:
 
 ```bash
-PY=/home/ubuntu/.local/share/education-venv/bin/python
-"$PY" -m pytest -q
+python predict.py --checkpoint results/deney-b/best.pt \
+  --image handwriting/hane-01.png handwriting/hane-02.png \
+          handwriting/hane-03.png handwriting/hane-04.png \
+          handwriting/hane-05.png handwriting/hane-06.png \
+          handwriting/hane-07.png handwriting/hane-08.png handwriting/hane-09.png \
+  --output kisisel/yeniden-tahmin
 ```
 
-## 3. Eğitimi yeniden üretme
+Bu işlem eğitim yapmaz. `kisisel/yeniden-tahmin` henüz var olmayan bir dizin olmalıdır; mevcut çıktıların üzerine yazılmaz. Sonuçlar, her hane için `*_prepared.png` görüntüsü ve `predictions.json` dosyası olarak kaydedilir. Gerçek etiketlerle karşılaştırma `handwriting/metrics.json` içindedir.
 
-Komutları repo kökünde çalıştırın. MNIST dizini Git deposunun dışında olmalıdır. İlk indirme internet bağlantısı gerektirir. Çıktı klasörü zaten varsa üzerine yazılmaz; yeni bir ad seçin.
+`predict.py` her dosyada tek rakam bekler. Orijinal fotoğraftan hane kırpma işlemi manueldir; program tüm numarayı otomatik olarak bölmez. Ön işleme sırasında gri tona dönüştürme, renk yönünü uyarlama, rakam alanını kırpma, ölçekleme ve 28 × 28 tuvalde merkezleme uygulanır. Son adımda eğitimle aynı normalizasyon kullanılır. Softmax çıktısı, doğru tahminin garantisi olarak yorumlanmamalıdır.
+
+## Eğitim ayarları
+
+| Ayar | Deney A | Deney B |
+|---|---|---|
+| Mimari | 784 → 128 → 64 → 10 | 784 → 256 → 128 → 10 |
+| Aktivasyon | ReLU | ReLU |
+| Loss | CrossEntropyLoss | CrossEntropyLoss |
+| Optimizer | Adam | Adam |
+| Öğrenme oranı | 0.001 | 0.001 |
+| Batch size | 128 | 128 |
+| Epoch | 12 | 12 |
+| Seed | 42 | 42 |
+| Train / validation | 50.000 / 10.000 | 50.000 / 10.000 |
+
+Modelleri sıfırdan eğittim; CNN veya hazır eğitilmiş model kullanmadım. Görüntüler 784 özellik olarak düzleştirilir ve çıkışta 10 logits üretilir. `CrossEntropyLoss` öncesinde ayrıca softmax uygulanmaz. Normalizasyon `(pixel / 255 − 0.1307) / 0.3081` şeklindedir.
+
+Her deneyin en düşük validation loss değerine sahip checkpoint'i saklandı. İki deneyin en iyi validation loss değerleri karşılaştırıldığında B modeli seçildi. Test verisi mimari, epoch veya hiperparametre seçiminde kullanılmadı.
+
+## Eğitimi yeniden çalıştırma
+
+MNIST önbelleği Git deposunun dışında olmalıdır. İlk indirme internet bağlantısı gerektirir. Aşağıdaki çıktı dizinleri daha önce oluşturulmamış olmalıdır.
 
 ```bash
 python train.py --data-dir "$HOME/datasets/mnist" \
@@ -59,71 +100,24 @@ python train.py --data-dir "$HOME/datasets/mnist" \
   --optimizer adam --lr 0.001 --seed 42 --output runs/deney-b
 ```
 
-Her koşu `config.json`, `environment.json`, `split.json`, `history.csv`, `history.json`, `summary.json`, `loss.png`, `accuracy.png` ve `best.pt` üretir. MNIST indirmenin test arşivini de önbelleğe alması test örneklerinin eğitimde kullanıldığı anlamına gelmez; eğitim yordamı yalnız `train=True` havuzunu yükler.
+Her koşuda `config.json`, `environment.json`, `split.json`, `history.csv`, `history.json`, `summary.json`, `loss.png`, `accuracy.png` ve `best.pt` üretilir. Repo içindeki tamamlanmış deneyler `results/` altında korunur; yeni koşular bu komutlarla `runs/` altına yazılır.
 
-**Ölçüm ayrıntısı:** Training loss/accuracy, epoch içindeki minibatch güncellemeleri sırasında hesaplanır; tek bir sabit final modelin train ölçümü değildir. Validation ölçümü her epoch sonunda sabit modelle yapılır. Loss/accuracy, örnek sayılarıyla ağırlıklandırılır. Eğitim süresi epoch döngüsü ile checkpoint/log yazımını kapsar; veri indirme ve grafik üretimi hariçtir.
+Train loss ve accuracy, epoch içindeki minibatch güncellemeleri sırasında; validation ölçümleri ise epoch sonunda sabit modelle hesaplanır. Eğitim süresi epoch döngüsünü ve checkpoint/log yazımını kapsar. Veri indirme ve grafik üretimi bu süreye dahil değildir.
 
-## 4. Model seçimi ve final test
+## Final testi yeniden çalıştırma
 
-Önce her koşunun `summary.json` dosyasındaki `best_val_loss` değerlerini karşılaştırın. Küçük olanı seçin, kararınızı kaydedin; ancak bundan sonra seçilen checkpoint üzerinde test çalıştırın:
+Tamamlanan çalışmada B modelinin 7. epoch checkpoint'i seçilmiştir. Bu checkpoint ile kayıtlı test sonucunu yeniden ölçmek için:
 
 ```bash
-# A seçilmişse; B seçilirse checkpoint yolunu değiştirin.
-python evaluate.py --checkpoint runs/deney-a/best.pt \
+python evaluate.py --checkpoint results/deney-b/best.pt \
   --data-dir "$HOME/datasets/mnist" \
-  --output runs/final-test --final-model-selected
+  --output runs/final-test-tekrar --final-model-selected
 ```
 
-Bu bayrak yöntem disiplininin yerini tutmaz. Test sonucundan sonra ayar değiştirilirse aynı test artık tarafsız final test olarak sunulamaz. Çıktı, test loss/accuracy, ölçüm süresi, checkpoint SHA-256 ve confusion matrix dosyalarını içerir. Confusion matrix satırları gerçek, sütunları tahmin edilen sınıftır.
+Bu komut, ayrı tutulan 10.000 MNIST test örneğini değerlendirir. `test_metrics.json` ile confusion matrix'in JSON, CSV ve PNG dosyalarını üretir. Matrisin satırları gerçek, sütunları tahmin edilen sınıftır.
 
-## 5. Kendi el yazısı deneyi
+Yeni bir A/B karşılaştırması yapılırsa önce bu yeni koşuların `best_val_loss` değerleriyle model seçilmeli, ardından ilgili checkpoint test edilmelidir. Test sonucuna bakarak ayar değiştirmek, test kümesinin tarafsız değerlendirme amacıyla kullanımını bozar.
 
-Bu bölümde yalnız öğrencinin gerçekten kendi yazdığı görüntüler kullanılmalıdır. MNIST örnekleri, bilgisayar fontları veya yapay üretilmiş rakamlar kişisel el yazısı yerine sunulmaz.
+## El yazısı görselleri
 
-1. Öğrenci numarasını sade arka plana koyu kalemle, rakamlar birbirine değmeden yazın.
-2. Net fotoğrafı `kisisel/` altında saklayın; her rakamı ayrı görüntü olarak kırpın.
-3. Seçilen checkpoint ile çalıştırın:
-
-```bash
-python predict.py --checkpoint runs/deney-a/best.pt \
-  --image kisisel/hane-01.png kisisel/hane-02.png \
-  --output kisisel/sonuclar
-```
-
-Ön işleme: EXIF yönünü düzeltme → gri ton → arka plan/rakam rengini uyarlama → rakam alanını kırpma → uzun kenarı 20 piksele ölçekleme → 28 × 28 siyah tuvale yerleştirme → ağırlık merkezine göre ortalama → eğitimle aynı normalizasyon. Her dosya tek rakam içermelidir; tam numara segmentasyonu bu CLI tarafından yapılmaz.
-
-`*_prepared.png` görüntülerini gözle kontrol edin. Gerçek etiketleri tahminlerle karşılaştırın; yalnız softmax maksimumunu doğruluk saymayın. Softmax olasılığı kalibre bir güven garantisi değildir. Yanlış tahminleri gizlemeyin: fotoğraf ışığı, kalem kalınlığı, eğim, kırpma ve MNIST ile dağılım farkı nedeniyle hata oluşabilir.
-
-**Gizlilik ve teslim:** Öğrenci, numara görsellerinin de **public GitHub deposunda yayımlanmasını açıkça onaylamıştır**. Bu nedenle teslim için gerekli orijinal fotoğraf, hane kırpmaları, hazırlanmış görüntüler ve sonuç karşılaştırması `handwriting/` altında paylaşılır. Yerel çalışma kopyaları `kisisel/` altında Git dışında kalır. Depo herkese açıktır; öğretmenin görüntülemek için davete ihtiyacı yoktur.
-
-### Hazır modelle kişisel tahmini yeniden çalıştırma
-
-Bu komut yeni eğitim yapmadan repodaki seçilmiş checkpoint ile aynı dokuz kırpmayı değerlendirir. `--output` dizini önceden var olmamalıdır.
-
-```bash
-python predict.py --checkpoint results/deney-b/best.pt \
-  --image handwriting/hane-01.png handwriting/hane-02.png \
-          handwriting/hane-03.png handwriting/hane-04.png \
-          handwriting/hane-05.png handwriting/hane-06.png \
-          handwriting/hane-07.png handwriting/hane-08.png handwriting/hane-09.png \
-  --output kisisel/yeniden-tahmin
-```
-
-`handwriting/metrics.json` gerçek etiketlerle karşılaştırmayı, `handwriting/tahminler/predictions.json` softmax dağılımlarını içerir. Modelin 6. hanedeki 7’yi 4 olarak tanıması raporda korunmuştur.
-
-## 6. Kod haritası
-
-| Dosya | Sorumluluk |
-|---|---|
-| `mlp.py` | En az iki ReLU gizli katmanlı MLP |
-| `core.py` | Seed, ayrık veri bölümü, eğitim ölçümü, checkpoint |
-| `train.py` | Yalnız train/validation eğitimi, grafikler |
-| `evaluate.py` | Final seçimin ardından ayrı test kümesi |
-| `predict.py` | Gerçek tek-rakam görselini hazırlama ve tahmin |
-| `tests/` | Mimari, veri ayrımı, CLI, ölçüm ve görüntü testleri |
-| `ANLATIM.md` | Kavramları tartışmak için Türkçe çalışma notu |
-| `KAYNAKLAR.md` | Kaynaklar |
-
-## 7. Yapay zekâ desteği ve öğrenme
-
-Kod, deney yürütme ve rapor hazırlığında yapay zekâ desteği kullanılmıştır. Sayısal sonuçlar gerçek çalıştırma dosyalarından alınır; kişisel el yazısı öğrenciye aittir. Öğrencinin mimariyi, train/validation/test ayrımını, loss/accuracy eğrilerini ve kendi el yazısındaki hataları açıklaması ayrıca çalışılacak bir öğrenme adımıdır; kodun hazır olması bu yetkinliği otomatik kanıtlamaz.
+Kendi fotoğrafım ve bu fotoğraftan elde edilen görüntüler `handwriting/` altında bulunuyor. Bu görselleri ödevin parçası olarak herkese açık paylaşıyorum. Yeni kişisel denemeler için kullanılan `kisisel/` dizini Git takibinin dışındadır.

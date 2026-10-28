@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_evaluation_requires_final_selection_and_keeps_confusion_counts(tmp_path, monkeypatch):
-    assert (ROOT / 'evaluate.py').exists(), 'Ayrı final değerlendirme CLI henüz yok'
+    assert (ROOT / 'evaluate.py').exists(), 'evaluate.py dosyası bulunamadı.'
     evaluate = importlib.import_module('evaluate')
     calls = []
     class TestDataset:

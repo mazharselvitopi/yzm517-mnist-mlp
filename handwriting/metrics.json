@@ -2,7 +2,7 @@
   "samples": 9,
   "correct": 8,
   "accuracy": 0.8888888888888888,
-  "ground_truth_source": "Kullanıcının kendi fotoğrafının insan tarafından okunması; etiketler model tahmininden türetilmedi.",
+  "ground_truth_source": "Orijinal el yazısı fotoğrafının görsel olarak okunması; etiketler model tahmininden türetilmedi.",
   "digits": [
     {
       "position": 1,

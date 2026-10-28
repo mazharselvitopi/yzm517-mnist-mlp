@@ -2,7 +2,7 @@
 
 ## 1. Amaç ve yöntem
 
-Bu ödevde MNIST veri setindeki el yazısı rakamlarını MLP kullanarak sınıflandırmayı, iki farklı model yapılandırmasını karşılaştırmayı ve seçilen modeli kendi el yazıma uygulamayı amaçladım. Yönergeye uygun olarak CNN ve hazır eğitilmiş model kullanmadım.
+Bu çalışmada MNIST veri setindeki el yazısı rakamlarını MLP kullanarak sınıflandırmayı, iki farklı model yapılandırmasını karşılaştırmayı ve seçilen modeli kendi el yazıma uygulamayı amaçladım. CNN ve hazır eğitilmiş model kullanmadım.
 
 Çalışmanın kod, deney yürütme ve rapor hazırlama aşamalarında yapay zekâ desteği aldım. Rapordaki sayısal sonuçlar gerçek çalıştırmaların JSON ve CSV kayıtlarına dayanıyor. Kişisel denemede kullandığım fotoğraf ise kendi el yazımla yazdığım öğrenci numarama ait.
 

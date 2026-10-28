@@ -11,9 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_single_digit_preprocessing_and_prediction(tmp_path):
-    assert (ROOT / 'predict.py').exists(), 'Tek rakam önişleme CLI henüz yok'
+    assert (ROOT / 'predict.py').exists(), 'predict.py dosyası bulunamadı.'
     predict = importlib.import_module('predict')
-    # Sentetik çubuk: kullanıcı el yazısı değildir, yalnız piksel sözleşmesini sınar.
+    # Sentetik çubuk yalnız piksel sözleşmesini sınar; gerçek el yazısı örneği değildir.
     dark = Image.new('L', (60, 90), 255)
     ImageDraw.Draw(dark).rectangle((9, 20, 16, 74), fill=0)
     dark.save(tmp_path / 'dark.png')
