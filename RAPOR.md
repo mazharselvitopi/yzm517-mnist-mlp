@@ -1,16 +1,22 @@
-# Deney Raporu — MNIST ile MLP Tabanlı El Yazısı Rakam Tanıma
+# Deney raporu: MNIST ile MLP tabanlı el yazısı rakam tanıma
 
 ## 1. Amaç ve yöntem
 
-Amaç, MNIST veri setindeki 0–9 el yazısı rakamlarını CNN kullanmadan sınıflandırmak, iki MLP yapılandırmasını karşılaştırmak ve seçilen modeli öğrencinin gerçek el yazısına uygulamaktır. Kod, deney ve rapor hazırlığında yapay zekâ desteği kullanılmıştır. Tablolardaki sayılar gerçek çalıştırmaların JSON/CSV kayıtlarından alınmıştır; kişisel görüntü öğrenci tarafından sağlanmıştır. Bu metin, öğrencinin konuyu öğrendiğine ilişkin bir değerlendirme değildir.
+Bu ödevde MNIST veri setindeki el yazısı rakamlarını MLP kullanarak sınıflandırmayı, iki farklı model yapılandırmasını karşılaştırmayı ve seçilen modeli kendi el yazıma uygulamayı amaçladım. Yönergeye uygun olarak CNN ve hazır eğitilmiş model kullanmadım.
 
-## 2. Veri ve deney kontrolü
+Çalışmanın kod, deney yürütme ve rapor hazırlama aşamalarında yapay zekâ desteği aldım. Rapordaki sayısal sonuçlar gerçek çalıştırmaların JSON ve CSV kayıtlarına dayanıyor. Kişisel denemede kullandığım fotoğraf ise kendi el yazımla yazdığım öğrenci numarama ait.
 
-MNIST’in 60.000 örnekli eğitim havuzu, seed 42 ile tek permütasyon üzerinden **50.000 train ve 10.000 validation** olarak bölündü. İndeksler `results/deney-{a,b}/split.json` içinde kayıtlıdır. İki deneyin train/validation indekslerinin birebir aynı olduğu ve bölümlerin kesişmediği programatik olarak doğrulandı. Resmî ayrı **10.000 test örneği**, model seçiminden sonra yalnız seçilen model için ölçüldü.
+## 2. Veri seti ve veri ayrımı
 
-Her görüntü gri tonlamalı 28 × 28 pikseldir. Yoğunluklar önce [0,1] aralığına dönüştürülüp `(x−0.1307)/0.3081` ile normalize edildi. Bu sabitler deneyler veya test sonucu kullanılarak yeniden ayarlanmadı. Bölme rastgeledir, stratified değildir.
+Çalışmada MNIST’in 60.000 örnekli eğitim havuzundan 50.000 örneği train, 10.000 örneği validation için ayırdım. Bölme işleminde seed değerini 42 olarak sabitledim. İki modelin aynı örneklerle karşılaştırılması için her iki deneyde de aynı indeksleri kullandım. Bu indeksler `results/deney-{a,b}/split.json` dosyalarında bulunuyor. Train ve validation kümelerinin kesişmediği, iki deneyin de aynı bölmeyi kullandığı programatik olarak kontrol edildi.
 
-## 3. Modeller ve hiperparametreler
+MNIST’in ayrı tutulan 10.000 örnekli test kümesini model seçimine dahil etmedim. Test ölçümünü yalnızca validation sonucuna göre model seçildikten sonra yaptım.
+
+Görüntüler 28 × 28 piksel ve gri tonlamalıdır. Piksel değerlerini önce [0,1] aralığına dönüştürüp `(x−0.1307)/0.3081` işlemiyle normalize ettim. Bu normalizasyon sabitlerini deney veya test sonuçlarına göre değiştirmedim. Veri bölme işlemi rastgeledir; sınıf oranlarını koruyan stratified bir bölme uygulanmamıştır.
+
+## 3. Model yapısı ve hiperparametreler
+
+İki deneyde de iki gizli katmanlı bir MLP kullandım. Karşılaştırmada yalnızca gizli katmanların genişliğini değiştirdim; diğer eğitim ayarlarını aynı tuttum.
 
 | Özellik | Deney A | Deney B |
 |---|---:|---:|
@@ -25,11 +31,15 @@ Her görüntü gri tonlamalı 28 × 28 pikseldir. Yoğunluklar önce [0,1] aral�
 | Seed | 42 | 42 |
 | Kayıp | CrossEntropyLoss | CrossEntropyLoss |
 
-Tek karşılaştırma değişkeni gizli katman genişliğidir. Ağırlıklar sıfırdan başlatıldı. Çıkışta 10 logits üretilir; `CrossEntropyLoss` öncesinde softmax uygulanmaz. Eğitim CPU üzerinde iki PyTorch thread ile yapıldı. Sürüm ve platform kayıtları her deneyin `environment.json` dosyası ile `environment-lock.txt` içindedir.
+28 × 28 boyutundaki görüntü, modelin girişinde 784 elemanlı bir vektöre dönüştürülüyor. Gizli katmanlardan sonra ReLU, son katmanda ise 10 sınıf için logits üretiliyor. `CrossEntropyLoss` doğrudan logits beklediği için eğitimde çıkışa ayrıca softmax eklemedim. Ağırlıklar sıfırdan başlatıldı.
+
+Eğitimler CPU üzerinde iki PyTorch thread kullanılarak çalıştırıldı. Kullanılan sürümler ve platform bilgisi her deneyin `environment.json` dosyasında, tam paket listesi ise `environment-lock.txt` dosyasında kayıtlıdır.
 
 ## 4. Eğitim ve validation sonuçları
 
-Her koşuda en düşük validation loss elde edilen checkpoint saklandı. Aşağıdaki train değerleri, seçilen epoch’un minibatch güncellemeleri sırasında toplanan ölçümlerdir; sabit checkpoint’in train kümesi üzerinde ayrıca ölçülmesi değildir. Validation değerleri epoch sonunda sabit modelle hesaplandı.
+Her deneyde en düşük validation loss değerine sahip checkpoint saklandı. Aşağıdaki tabloda hem bu checkpoint’in seçildiği epoch’a hem de son epoch’a ait sonuçları gösterdim.
+
+Train ölçümleri, epoch içindeki minibatch güncellemeleri sırasında toplanmıştır. Bu nedenle bunlar, seçilen sabit checkpoint’in train kümesi üzerinde sonradan yeniden ölçülmüş sonuçları değildir. Validation ölçümleri ise her epoch sonunda sabit modelle hesaplanmıştır.
 
 | Ölçüt | Deney A | Deney B |
 |---|---:|---:|
@@ -44,35 +54,35 @@ Her koşuda en düşük validation loss elde edilen checkpoint saklandı. Aşağ
 | Son epoch validation accuracy | %97.370 | %97.900 |
 | 12 epoch eğitim süresi | 147.998 saniye | 151.576 saniye |
 
-Eğitim süresi epoch döngüsü ile checkpoint/log yazımını kapsar; indirme ve grafik üretimi hariçtir. Bu süreler aynı sunucudaki tek koşulardır; genel bir donanım benchmark’ı veya istatistiksel hız üstünlüğü olarak yorumlanmamalıdır.
+Eğitim süreleri epoch döngüsünü ve checkpoint/log yazımını kapsıyor; veri indirme ve grafik üretimi bu sürelere dahil değil. Bu ölçümleri aynı sunucuda yapılan iki koşunun süresi olarak değerlendiriyorum. Tek koşudan genel bir donanım performansı veya istatistiksel hız üstünlüğü sonucu çıkarmıyorum.
 
 ### Eğitim grafikleri
 
-**Deney A — loss ve accuracy:**
+Deney A’nın loss ve accuracy grafikleri:
 
 ![A loss](results/deney-a/loss.png)
 
 ![A accuracy](results/deney-a/accuracy.png)
 
-**Deney B — loss ve accuracy:**
+Deney B’nin loss ve accuracy grafikleri:
 
 ![B loss](results/deney-b/loss.png)
 
 ![B accuracy](results/deney-b/accuracy.png)
 
-### Model seçimi ve yorum
+### Model seçimi ve sonuçların yorumu
 
-**Deney B’nin 7. epoch checkpoint’i seçildi**, çünkü A’nın en iyi validation loss’u 0.083207 iken B’ninki 0.075181 idi. Seçim kaydı `results/selection.json` dosyasına test çalıştırılmadan önce yazıldı. Test accuracy bu kararı vermek için kullanılmadı.
+Final değerlendirmesi için **Deney B’nin 7. epoch checkpoint’ini seçtim**. Seçim ölçütüm en düşük validation loss idi. A modelinde bu değer 0.083207, B modelinde ise 0.075181 olarak elde edildi. Seçim kaydı test çalıştırılmadan önce `results/selection.json` dosyasına yazıldı. Bu kararı verirken test accuracy değerini kullanmadım.
 
-Her iki modelde train loss azalmaya devam ederken en iyi epoch’tan sonraki validation loss daha yüksek ve oynak kaldı. Bu örüntü aşırı öğrenmeyle uyumludur; tek bir koşu tek başına nedenin kesin kanıtı değildir. Daha büyük B modelinin validation loss’u daha düşüktür, fakat buradan tüm büyük modellerin daha iyi olduğu sonucu çıkmaz.
+Grafiklerde her iki modelin train loss değerinin düşmeye devam ettiğini, buna karşılık en iyi epoch’tan sonraki validation loss değerlerinin daha yüksek ve dalgalı kaldığını görüyorum. Bu durumu aşırı öğrenmeyle uyumlu bir işaret olarak değerlendiriyorum. Ancak tek koşuyla bunun nedenini kesinleştirmek mümkün değil. B modelinin bu deneyde daha düşük validation loss vermesi, daha büyük her modelin daha iyi sonuç vereceği anlamına da gelmiyor.
 
-B’nin 12. epoch validation accuracy’si %97.9 ile seçilen 7. epoch’un %97.8 değerinden yüksektir; buna rağmen validation loss daha kötüdür. Bu çelişki değildir: accuracy yalnız doğru sınıfı seçip seçmediğine bakar; cross-entropy ise tahmin olasılıklarının büyüklüğüne de duyarlıdır. Seçim kriteri önceden **validation loss** olarak sabitlendiği için son epoch’a geçilmedi.
+B modelinin son epoch’taki validation accuracy değeri %97.9 iken seçtiğim 7. epoch’ta bu değer %97.8’di. Buna rağmen son epoch’u seçmedim; çünkü validation loss daha yüksekti. Accuracy yalnızca doğru sınıfın seçilip seçilmediğine bakarken cross-entropy, tahmin olasılıklarını da hesaba katıyor. Bu nedenle seçimde önceden belirlenen validation loss ölçütünü korudum.
 
-İlk B çalıştırması 8. epoch sonrasında dış kesintiyle durdu. Yarım koşu karşılaştırmaya alınmadı; aynı ayarlarla sıfırdan başlatılan ve 12 epoch’u tamamlayan ikinci çalıştırma kullanıldı. Bu, checkpoint’ten devam ettirilmiş bir koşu değildir.
+B modelinin ilk çalıştırması 8. epoch sonrasında dış kesinti nedeniyle durdu. Yarım kalan bu koşuyu karşılaştırmaya dahil etmedim. Aynı ayarlarla sıfırdan başlatılıp 12 epoch’u tamamlayan ikinci koşunun sonuçlarını kullandım; eğitim checkpoint’ten devam ettirilmedi.
 
-## 5. Ayrı test kümesi sonucu
+## 5. Test kümesi sonucu
 
-Seçilen B/epoch 7 modeli, 10.000 test görüntüsü üzerinde ölçüldü:
+Validation sonucuna göre seçilen B modelinin 7. epoch checkpoint’i, ayrı tutulan 10.000 test görüntüsü üzerinde değerlendirildi.
 
 | Ölçüt | Sonuç |
 |---|---:|
@@ -81,21 +91,25 @@ Seçilen B/epoch 7 modeli, 10.000 test görüntüsü üzerinde ölçüldü:
 | Doğru / toplam | **9.780 / 10.000** |
 | Yanlış | 220 |
 
-Ham ölçüm: `results/final-test/test_metrics.json`. Checkpoint SHA-256 bu kayıtta yer alır. Confusion matrix toplamının 10.000 ve köşegen toplamının 9.780 olduğu ayrıca doğrulandı.
+Ham ölçümler `results/final-test/test_metrics.json` dosyasında bulunuyor. Kullanılan checkpoint’in SHA-256 değeri de aynı kayıtta yer alıyor. Confusion matrix toplamının 10.000, köşegen toplamının ise 9.780 olduğu kontrol edildi; bu değerler test accuracy ile tutarlı.
 
 ![Test confusion matrix](results/final-test/confusion_matrix.png)
 
-Satırlar gerçek sınıf, sütunlar tahmin edilen sınıftır. En sık gözlenen yanlış eşleştirme, gerçek 9’un 4 tahmin edilmesidir (24 örnek). Diğer sık çiftler 3→9 (9), 2→7 (9), 7→9 (8), 7→1 (7) oldu. Bunlar görüntüleri tek tek incelemeden hataların fiziksel nedenini kanıtlamaz.
+Matriste satırlar gerçek sınıfı, sütunlar tahmin edilen sınıfı gösteriyor. En sık yapılan hata, gerçek 9 rakamının 4 olarak tahmin edilmesi oldu; bu hata 24 örnekte görüldü. Diğer sık hatalar 3→9 (9 örnek), 2→7 (9 örnek), 7→9 (8 örnek) ve 7→1 (7 örnek) şeklindeydi. Bu sayılar hangi sınıfların karıştığını gösteriyor, ancak görüntüler tek tek incelenmeden hatanın fiziksel nedenini açıklamıyor.
 
-Test sonucundan sonra mimari, epoch veya hiperparametre değiştirilmedi.
+Test sonucunu gördükten sonra mimariyi, epoch seçimini veya hiperparametreleri değiştirmedim.
 
-## 6. Öğrencinin kendi el yazısı
+## 6. Kendi el yazımla yaptığım deneme
 
-Öğrenci kendi yazdığı dokuz haneli numaranın fotoğrafını sağladı. Orijinal görüntü `handwriting/orijinal.png` içinde korunur. İlk iki rakamın çizgileri birbirine temas ettiği için her hane **insan tarafından belirlenen dikdörtgenlerle** kırpıldı. Rakam çizilmedi, yeniden üretilmedi veya model sonucuna göre düzeltilmedi. Kırpma koordinatları ve insanın okuduğu gerçek etiketler `handwriting/kirpma-kaydi.json` içindedir; etiketler model tahmininden türetilmedi.
+Bu bölüm için öğrenci numaramı kendi el yazımla yazıp fotoğrafını kullandım. Orijinal görüntü `handwriting/orijinal.png` dosyasında bulunuyor. Fotoğraftaki ilk iki rakamın çizgileri birbirine temas ettiği için haneler, elle belirlenen dikdörtgen sınırlarla ayrı görüntülere kırpıldı. Rakamlar yeniden çizilmedi ve modelin sonucuna göre değiştirilmedi.
 
-Ön işleme sırası: EXIF yönü → gri ton → renk yönünü uyarlama → rakam alanını kırpma → uzun kenarı 20 piksele ölçekleme → 28 × 28 tuval → ağırlık merkeziyle ortalama → eğitimle aynı normalizasyon. Hazırlanan dokuz görüntü görsel olarak incelendi; rakamlar okunabilir durumda ve arka plan belirgin biçimde ayrılmıştı. Bu gözlem ilk iki hanenin kırpılmasındaki manuel kararı kusursuz bir otomatik segmentasyon yöntemi yapmaz.
+Kırpma koordinatları ve görüntüden okunarak belirlenen gerçek etiketler `handwriting/kirpma-kaydi.json` dosyasında kayıtlıdır. Gerçek etiketler modelin tahminlerinden alınmadı.
 
-![Gerçek ve tahmin edilen kişisel rakamlar](handwriting/karsilastirma.png)
+Görüntülerin hazırlanmasında şu sıra uygulandı: EXIF yönünü düzeltme, gri tona dönüştürme, rakam ve arka plan renklerini MNIST’e uyarlama, rakam alanını kırpma, uzun kenarı 20 piksele ölçekleme, 28 × 28 tuvale yerleştirme, ağırlık merkezine göre merkezleme ve eğitimle aynı normalizasyonu uygulama.
+
+Hazırlanan görüntülerin görsel kontrolünde rakamların okunabilir olduğu ve arka planın belirgin biçimde ayrıldığı görüldü. Ancak hanelerin elle kırpılması, bu çalışmanın otomatik bir numara bölütleme sistemi olmadığı anlamına geliyor.
+
+![Kendi el yazım için gerçek etiket ve tahmin karşılaştırması](handwriting/karsilastirma.png)
 
 | Hane | Gerçek | Tahmin | Sonuç |
 |---|---:|---:|---|
@@ -109,17 +123,16 @@ Test sonucundan sonra mimari, epoch veya hiperparametre değiştirilmedi.
 | 8 | 1 | 1 | Doğru |
 | 9 | 3 | 3 | Doğru |
 
-**Hane bazlı doğruluk: 8/9 = %88.89.** Tüm numaranın eksiksiz tanınması açısından sonuç başarılı değildir; bir hane yanlıştır. Dokuz haneli tek bir örnekten gerçek dünyadaki genel doğruluk için güvenilir bir oran çıkarılamaz.
+Model, kendi el yazımdaki dokuz hanenin sekizini doğru tahmin etti. **Hane bazlı doğruluk 8/9, yani %88.89 oldu.** Ancak numaranın tamamı açısından baktığımda sonuç eksiksiz değil; altıncı hanede hata var. Ayrıca tek fotoğraftaki dokuz hane üzerinden modelin gerçek dünyadaki genel başarısı hakkında kesin bir oran veremem.
 
-Yanlış tahmin edilen altıncı hanede modelin 4 sınıfı için maksimum softmax çıktısı yaklaşık **0.9171** oldu. Yüksek softmax çıktısı doğru tahmin veya kalibre güven anlamına gelmez. El yazısındaki orta çizgi, kamera/kâğıt koşulları ve MNIST’ten dağılım farkı olası açıklamalardır; bu deney bunlardan hangisinin nedensel olduğunu ayırmaz. Özellikle aynı fotoğraftaki diğer 7 doğru tanındığından, yalnız rakam sınıfına bakarak kesin neden söylemek mümkün değildir. Sonucu iyileştirmek için test sonrası yeniden eğitim veya seçici fotoğraf değiştirme yapılmadı.
+Altıncı hanedeki 7 rakamı, model tarafından 4 olarak tahmin edildi. Bu yanlış tahminde 4 sınıfının softmax çıktısı yaklaşık 0.9171’di. Dolayısıyla yüksek softmax çıktısını tek başına güvenilirlik göstergesi olarak almıyorum.
 
-## 7. Sınırlılıklar ve sonuç
+Yazımdaki orta çizgi, fotoğraf ve kâğıt koşulları ya da MNIST görüntüleriyle kendi görüntüm arasındaki dağılım farkı bu hatada etkili olmuş olabilir. Fakat bu deney, hangi etkenin hataya neden olduğunu ayırmaya yetmiyor. Aynı fotoğraftaki diğer 7 rakamı doğru tanındığı için yalnızca rakamın sınıfına bakarak açıklama yapmak da yeterli değil. Sonucu daha iyi göstermek için fotoğrafı seçici biçimde değiştirmedim veya test sonrasında yeniden eğitim yaptırmadım.
 
-- İki mimari, tek seed ve tek veri bölümü karşılaştırıldı; çoklu seed belirsizliği ölçülmedi.
-- Validation ile model ve epoch seçildiği için validation sonucu tarafsız final test sonucu değildir.
-- Rastgele bölme stratified değildir; sınıf dengesi zorunlu olarak sabitlenmez.
-- Kişisel örnek sayısı yalnız dokuzdur ve bazı rakamlar tekrarlıdır; tüm rakam sınıflarını kapsamaz.
-- Kırpma manueldir; uçtan uca çok-haneli OCR sistemi yapılmadı.
-- MLP’nin yüksek MNIST doğruluğu, kamera fotoğraflarında aynı başarıyı garanti etmedi.
+## 7. Sınırlılıklar ve genel değerlendirmem
 
-Sonuç olarak iki gizli katmanlı, sıfırdan eğitilmiş MLP ile MNIST test kümesinde **%97.80**, öğrencinin sağladığı gerçek el yazısında **8/9 hane doğruluğu** elde edildi. Modelin başarısı ile öğrencinin bu süreci açıklayabilmesi ayrı değerlendirilmelidir.
+Bu çalışmada iki mimariyi tek seed ve tek veri bölümüyle karşılaştırdım. Farklı seed değerleriyle tekrar deney yapmadığım için sonuçların değişkenliğini ölçmedim. Validation kümesini model ve epoch seçimi için kullandığımdan, final başarı değerlendirmesinde ayrı test kümesini esas aldım.
+
+Kendi el yazımla yaptığım deneme de sınırlı: yalnızca dokuz hane var, bazı rakamlar tekrar ediyor ve tüm sınıflar temsil edilmiyor. Ayrıca haneler elle kırpıldığı için uçtan uca çalışan bir çok-haneli OCR sistemi geliştirmiş değilim.
+
+Sonuç olarak sıfırdan eğitilen iki gizli katmanlı MLP ile MNIST test kümesinde %97.80 doğruluk elde ettim. Kendi el yazımda ise dokuz haneden sekizi doğru tanındı. Bu iki sonucu birlikte değerlendirdiğimde, MNIST üzerinde yüksek doğruluk elde etmenin farklı koşullarda çekilen el yazısı fotoğraflarında aynı başarıyı garanti etmediğini görüyorum. Çalışmanın en belirgin örneği, modelin yüksek softmax çıktısına rağmen altıncı hanedeki 7’yi 4 olarak tahmin etmesi oldu.
